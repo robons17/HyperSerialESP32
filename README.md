@@ -28,12 +28,27 @@ RGB to RGBW conversion is calibrated for the neutral white channel BTF SK6812 bu
 Why the data integrity check was introduced which causes incompatibility with other software? Because at 2Mb speed many chip-makers allow few percent error in the transmission. And we do not want to have any distracting flashes. Broken frames are abandon without showing them. At 100Hz for 250 leds approximately 1-5% of the frames are broken.
   
 # Flashing
-  
+
+There are two versions of the firmware. The 'factory' and the 'base' one. Factory firmware should be flashed to offset 0x0, base firmware to offset 0x10000.
+
+**ESP32-S2 Lolin mini:**
+
+Requires using `esptool.py` to flash the firmware e.g.  
+
+ - `esptool.py write_flash 0x10000 firmware_esp32_s2_mini_SK6812_RGBW_COLD.bin` or
+ - `esptool.py write_flash 0x0 firmware_esp32_s2_mini_SK6812_RGBW_COLD.factory.bin`
+
+Troubleshooting: ESP32-S2 Lolin mini recovery procedure.  
+1. Put the board into dfu mode using board buttons: press board `Rst` + `0` buttons, then release `Rst`, next release `0`  
+Do not reset or disconnect the board until the end of the recovery procedure.
+2. Execute `esptool.py erase_flash`  
+3. Get [circuitpython](https://downloads.circuitpython.org/bin/lolin_s2_mini/pl/adafruit-circuitpython-lolin_s2_mini-pl-8.0.0.bin) Execute `esptool.py write_flash 0x0 adafruit-circuitpython-lolin_s2_mini-pl-8.0.0.bin`  
+4. Execute `esptool.py write_flash 0x10000 firmware_esp32_s2_mini_SK6812_RGBW_COLD.bin`  
+5. Reset the board manually
+
+**Generic ESP32:**
+
 Recommend to use [esphome-flasher](https://github.com/esphome/esphome-flasher/releases)  
-
-ESP32-S2 lolin mini requires using `esptool.py` to flash the firmware.
-
-Generic ESP32:
 
 For **RGBW LED strip** like RGBW SK6812 NEUTRAL white choose: *firmware_esp32_SK6812_RGBW_NEUTRAL.bin*  
   
@@ -105,9 +120,9 @@ build_flags = -DNEOPIXEL_RGB -DDATA_PIN=2 ${env.build_flags} -DSECOND_SEGMENT_ST
 ...
 ```
 Implementation example:
-- The diagram of the board for WS2812b including ESP32 and the SN74AHCT125N 74AHCT125 [level shifter](https://github.com/awawa-dev/HyperHDR/wiki/Level-Shifter).
+- The diagram of the board for WS2812b/SK6812 including ESP32 and the SN74AHCT125N 74AHCT125 [level shifter](https://github.com/awawa-dev/HyperHDR/wiki/Level-Shifter).
 
-![HyperSPI](https://user-images.githubusercontent.com/85223482/216823785-746b940c-73ab-4b2f-a243-91dbc9d22816.png)
+![HyperSPI](https://user-images.githubusercontent.com/85223482/222923979-f344349a-1f8b-4195-94ca-51721923359e.png)
 
 # Some benchmark results
 
